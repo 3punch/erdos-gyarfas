@@ -1,0 +1,6 @@
+degree,girth_lower_bound,is_counterexample,lambda2,legendre_p_q,max_checked,n,p,per_length,q,ramanujan_bound,ramanujan_ok,seconds,trigger
+6,3.997,False,4.2497,-1,8,2184,5,"{'4': 'absent-proof', '8': 'found'}",13,4.4721,True,0.17,8
+6,3.998,False,4.3089,-1,8,4896,5,"{'4': 'absent-proof', '8': 'found'}",17,4.4721,True,0.25,8
+14,3.966,False,4.0,-1,4,120,13,{'4': 'found'},5,7.2111,True,0.01,4
+6,3.725,False,4.442,1,16,12180,5,"{'4': 'absent-proof', '8': 'not-witnessed', '16': 'found'}",29,4.4721,True,3.16,16
+14,3.672,False,6.1061,1,8,2448,13,"{'4': 'absent-proof', '8': 'found'}",17,7.2111,True,0.38,8

@@ -64,6 +64,12 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--workers", type=int, default=0)
     sp.add_argument("--max-length", type=int, default=2048)
 
+    sp = sub.add_parser("phase3",
+                        help="run the Phase-3 SAT + LPS + voltage-lift pipeline")
+    sp.add_argument("--outdir", default="results/phase3")
+    sp.add_argument("--solver", default="cd15")
+    sp.add_argument("--timeout", type=float, default=120.0)
+
     sp = sub.add_parser("report", help="summarise an existing results directory")
     sp.add_argument("--outdir", default="results")
 
@@ -101,6 +107,9 @@ def main(argv: list[str] | None = None) -> int:
         from .hyperscale import run_hyperscale
         run_hyperscale(args.outdir, sizes=args.sizes, workers=args.workers,
                        max_length=args.max_length)
+    elif cmd == "phase3":
+        from .phase3 import run_phase3
+        run_phase3(args.outdir, solver=args.solver, timeout_s=args.timeout)
     elif cmd == "make-report":
         from .experiments.make_report import make_report
         path = make_report(args.outdir, args.out)

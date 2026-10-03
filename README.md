@@ -198,6 +198,21 @@ at C4, S₈ and the girth-5 annealed graphs at C8, and the PSL(2,q) expanders
 (girth > 16) at C32, the largest trigger observed. No counterexample. Full
 table in [`docs/EXPERIMENT_LOG.md`](docs/EXPERIMENT_LOG.md) §6.
 
+### Phase 3: SAT decision + explicit algebraic expanders
+
+`python -m erdos_gyarfas.cli phase3` (`erdos_gyarfas/phase3/`) leaves local
+search behind. A CNF/SMT encoding of "δ≥3 ∧ no 2^k cycle" is decided with
+**CryptoMiniSat / CaDiCaL** (python-sat) and **Z3**; cycle exclusion enumerates
+every L-cycle of K_n, so it is exact but combinatorial (L=4 cheap to n≈70, L=8
+only to n≈12, L≥16 never). For n≤10 the solver **proves UNSAT** — no δ≥3 graph
+avoids all 2^k≤n — independently reproducing the small-order bound; for n=30–70
+it finds C4-free δ≥3 graphs that the early-exit checker shows all still contain
+a C8. Explicit **LPS Ramanujan graphs** X^{p,q} (Hamilton-quaternion generators
+over PGL(2,q)) are verified Ramanujan (λ₂ ≤ 2√(d−1)) yet each still has a
+power-of-two cycle (X^{5,29}, n=12 180, triggers at C16). **Z_k voltage lifts**
+of the Petersen graph cancel C4 but a C8 always survives. Full tables in
+[`docs/EXPERIMENT_LOG.md`](docs/EXPERIMENT_LOG.md) §7.
+
 ## 7. Honest limitations
 
 * Long cycles are the weak point. Counting C₃₂ exactly on a 1000-vertex graph

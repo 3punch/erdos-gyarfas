@@ -1,0 +1,7 @@
+base,is_counterexample,k,max_checked,n,per_length,scheme,trigger
+petersen,False,3,8,30,"{'4': 'absent-proof', '8': 'found'}",unit,8
+petersen,False,3,8,30,"{'4': 'absent-proof', '8': 'found'}",random,8
+petersen,False,5,8,50,"{'4': 'absent-proof', '8': 'found'}",unit,8
+petersen,False,5,8,50,"{'4': 'absent-proof', '8': 'found'}",random,8
+petersen,False,7,8,70,"{'4': 'absent-proof', '8': 'found'}",unit,8
+petersen,False,7,8,70,"{'4': 'absent-proof', '8': 'found'}",random,8

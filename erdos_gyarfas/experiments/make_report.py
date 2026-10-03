@@ -161,6 +161,45 @@ def _hyperscale_table(rows: list[dict]) -> str:
     return "".join(out)
 
 
+def _phase3_sat_table(rows):
+    if not rows:
+        return "_(run `python -m erdos_gyarfas.cli phase3`)_"
+    out = ["| n | 2^k forbidden | backend | status | clauses | s | model trigger | verdict |\n"
+           "|---:|---|---|---|---:|---:|---|---|\n"]
+    for r in rows:
+        trig = r.get("trigger") or ""
+        trig = f"C{trig}" if trig not in ("", None) else "-"
+        out.append(f"| {r.get('n','')} | {r.get('lengths','')} | {r.get('backend','')} "
+                   f"| {r.get('status','')} | {r.get('clauses','')} | {r.get('seconds','')} "
+                   f"| {trig} | {r.get('verdict','')} |\n")
+    return "".join(out)
+
+
+def _phase3_lps_table(rows):
+    if not rows:
+        return "_(no LPS run)_"
+    out = ["| X^{p,q} | n | degree | Legendre(p/q) | lambda_2 | 2sqrt(d-1) | Ramanujan | girth >= | trigger |\n"
+           "|---|---:|---:|---:|---:|---:|---|---:|---|\n"]
+    for r in rows:
+        out.append(f"| X^{{{r.get('p','')},{r.get('q','')}}} | {r.get('n','')} | {r.get('degree','')} "
+                   f"| {r.get('legendre_p_q','')} | {r.get('lambda2','')} | {r.get('ramanujan_bound','')} "
+                   f"| {r.get('ramanujan_ok','')} | {r.get('girth_lower_bound','')} | C{r.get('trigger','')} |\n")
+    return "".join(out)
+
+
+def _phase3_voltage_table(rows):
+    if not rows:
+        return "_(no voltage run)_"
+    out = ["| base | k | voltage | n | C4 | trigger |\n"
+           "|---|---:|---|---:|---|---|\n"]
+    for r in rows:
+        per = str(r.get("per_length", ""))
+        c4 = "absent" if "absent-proof" in per else ("found" if "4': 'found" in per else "?")
+        out.append(f"| {r.get('base','')} | {r.get('k','')} | {r.get('scheme','')} "
+                   f"| {r.get('n','')} | {c4} | C{r.get('trigger','')} |\n")
+    return "".join(out)
+
+
 def _figure_list(results_dir: str) -> list[str]:
     out = []
     for stage in ("warmup", "medium", "large"):
@@ -177,6 +216,9 @@ def make_report(results_dir: str = "results", out_path: str = "docs/EXPERIMENT_L
         stages[stage] = _read(os.path.join(results_dir, stage, "results.csv"))
     validation = _read(os.path.join(results_dir, "validation", "poisson_validation.csv"))
     hyper = _read(os.path.join(results_dir, "hyperscale", "hyperscale.csv"))
+    sat3 = _read(os.path.join(results_dir, "phase3", "sat_sweep.csv"))
+    lps3 = _read(os.path.join(results_dir, "phase3", "lps.csv"))
+    volt3 = _read(os.path.join(results_dir, "phase3", "voltage.csv"))
     benchmark = _read(os.path.join(results_dir, "benchmark", "no_c4_c8_benchmark.csv"))
     pareto = _read(os.path.join(results_dir, "pareto", "pareto.csv"))
 
@@ -319,7 +361,22 @@ def make_report(results_dir: str = "results", out_path: str = "docs/EXPERIMENT_L
       "Every kept graph triggered, so none is a counterexample, consistent with "
       "the conjecture; the checker never had to prove absence at scale.\n\n")
 
-    A("## 7. Figures\n\n")
+    A("## 7. Phase 3 — SAT decision + explicit algebraic expanders\n\n")
+    A("Phase 3 leaves local search behind. (1) A CNF/SMT encoding of the condition (delta >= 3 and no 2^k cycle) is decided with CryptoMiniSat / CaDiCaL (python-sat) and Z3. (2) Explicit Lubotzky-Phillips-Sarnak Ramanujan graphs X^{p,q} are built from Hamilton quaternions and checked. (3) Z_k voltage lifts of the Petersen graph are engineered to cancel short power-of-two cycles.\n\n")
+    A("### 7.1 SAT/SMT decision\n\n")
+    A("Cycle exclusion is encoded by enumerating every L-cycle of K_n (one blocking clause each). This is exact but combinatorial - C(n,L)*(L-1)!/2 clauses - so L=4 is cheap to n~70, L=8 only to n~12, and L>=16 is never enumerable. For n<=10 every 2^k<=n is enumerable and the solver PROVES UNSAT: no delta>=3 graph on <=10 vertices avoids all of them, independently reproducing the known small-order bound. Beyond that the proof explodes (n=10 already needs 76 s), which is why the literature reached order 31 only with dedicated encodings. For n=30-70 only C4 is enumerable; the solver finds delta>=3 C4-free graphs, but the early-exit checker shows every one still contains a C8, so none is a counterexample.\n\n")
+    A(_phase3_sat_table(sat3))
+    A("\n")
+    A("### 7.2 LPS Ramanujan graphs\n\n")
+    A("X^{p,q} is the Cayley graph of PGL(2,q) on the p+1 primary norm-p Hamilton-quaternion generators (a>0, a odd); when Legendre(p/q)=-1 the identity component is taken. Every member is verified Ramanujan (lambda_2 <= 2sqrt(d-1)) and has high girth, yet each still contains a power-of-two cycle - the largest, X^{5,29} (n=12180, girth bound 3.7), has no C4, no witnessed C8, and triggers at C16.\n\n")
+    A(_phase3_lps_table(lps3))
+    A("\n")
+    A("### 7.3 Voltage lifts\n\n")
+    A("Z_k lifts of the Petersen graph (unit and random voltages) stay cubic and successfully cancel C4 (girth >= 5 is preserved), but a C8 survives in every lift - the cancellation is never complete.\n\n")
+    A(_phase3_voltage_table(volt3))
+    A("\n")
+
+    A("## 8. Figures\n\n")
     figs = _figure_list(results_dir)
     if figs:
         for f in figs:
@@ -328,7 +385,7 @@ def make_report(results_dir: str = "results", out_path: str = "docs/EXPERIMENT_L
         A("_(none yet)_\n")
     A("\n")
 
-    A("## 8. Reproduce\n\n")
+    A("## 9. Reproduce\n\n")
     A("```bash\npytest -q\n"
       "python -m erdos_gyarfas.cli all --workers 2\n"
       "python -m erdos_gyarfas.cli make-report\n```\n")

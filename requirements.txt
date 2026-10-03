@@ -9,6 +9,10 @@ torch>=2.2
 # Analysis and reporting
 matplotlib>=3.8
 pandas>=2.1
+# Phase 3: SAT/SMT decision
+z3-solver>=4.12
+python-sat>=1.8
+pycryptosat>=5.16
 # Tests
 pytest>=8.0
 pytest-timeout>=2.2

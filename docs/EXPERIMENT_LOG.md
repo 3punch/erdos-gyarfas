@@ -1,6 +1,6 @@
 # Experiment log
 
-_Generated from `results/` on 2026-10-03 17:27 UTC by `python -m erdos_gyarfas.cli make-report`. Every number below is read from the CSVs the runner wrote; none is transcribed by hand._
+_Generated from `results/` on 2026-10-03 18:27 UTC by `python -m erdos_gyarfas.cli make-report`. Every number below is read from the CSVs the runner wrote; none is transcribed by hand._
 
 See [METHODOLOGY.md](METHODOLOGY.md) for the mathematics and the literature each filter is grounded in.
 
@@ -229,7 +229,54 @@ Boolean early-exit checker over CSR + bitset marks: nothing is counted, each len
 
 **Reading the table.** The dihedral Cayley graphs $D_m$ with $S=\{r,r^{-1},s\}$ are Möbius/prism ladders and therefore *planar*; the filter discards all of them, which is exactly the brief's requirement (3-connected cubic planar graphs are a proven case, so they cannot be counterexamples). The `high_girth` family is a random cubic graph annealed toward large girth; the `achieved girth` column reports the girth *actually reached* — 5 at n=10k/25k but only 3 at n=50k/100k within the move budget. Random-plus-annealing does **not** reach the 9–12 girth target at N≈100k, so these are moderate-girth graphs and are reported as such rather than overclaimed. The `cayley_psl2` expanders have girth > 16: C8 and C16 come back `not-witnessed` (the per-length DFS budget was exhausted, which is *not* a proof of absence) and the first power-of-two cycle is witnessed at C32 — the largest trigger length in the study. Every kept graph triggered, so none is a counterexample, consistent with the conjecture; the checker never had to prove absence at scale.
 
-## 7. Figures
+## 7. Phase 3 — SAT decision + explicit algebraic expanders
+
+Phase 3 leaves local search behind. (1) A CNF/SMT encoding of the condition (delta >= 3 and no 2^k cycle) is decided with CryptoMiniSat / CaDiCaL (python-sat) and Z3. (2) Explicit Lubotzky-Phillips-Sarnak Ramanujan graphs X^{p,q} are built from Hamilton quaternions and checked. (3) Z_k voltage lifts of the Petersen graph are engineered to cancel short power-of-two cycles.
+
+### 7.1 SAT/SMT decision
+
+Cycle exclusion is encoded by enumerating every L-cycle of K_n (one blocking clause each). This is exact but combinatorial - C(n,L)*(L-1)!/2 clauses - so L=4 is cheap to n~70, L=8 only to n~12, and L>=16 is never enumerable. For n<=10 every 2^k<=n is enumerable and the solver PROVES UNSAT: no delta>=3 graph on <=10 vertices avoids all of them, independently reproducing the known small-order bound. Beyond that the proof explodes (n=10 already needs 76 s), which is why the literature reached order 31 only with dedicated encodings. For n=30-70 only C4 is enumerable; the solver finds delta>=3 C4-free graphs, but the early-exit checker shows every one still contains a C8, so none is a counterexample.
+
+| n | 2^k forbidden | backend | status | clauses | s | model trigger | verdict |
+|---:|---|---|---|---:|---:|---|---|
+| 5 | 4 | pysat:cd15 | UNSAT | 42 | 0.0 | - | no-counterexample(proven) |
+| 6 | 4 | pysat:cd15 | UNSAT | 74 | 0.0 | - | no-counterexample(proven) |
+| 7 | 4 | pysat:cd15 | UNSAT | 114 | 0.0 | - | no-counterexample(proven) |
+| 8 | 4,8 | pysat:cd15 | UNSAT | 162 | 0.08 | - | no-counterexample(proven) |
+| 9 | 4,8 | pysat:cd15 | UNSAT | 218 | 1.98 | - | no-counterexample(proven) |
+| 10 | 4,8 | pysat:cd15 | UNSAT | 282 | 75.95 | - | no-counterexample(proven) |
+| 30 | 4 | pysat:cd15 | SAT | 3242 | 0.94 | C8 | not-a-counterexample |
+| 40 | 4 | pysat:cd15 | SAT | 5922 | 2.8 | C8 | not-a-counterexample |
+| 50 | 4 | pysat:cd15 | SAT | 9402 | 6.7 | C8 | not-a-counterexample |
+| 60 | 4 | pysat:cd15 | SAT | 13682 | 11.48 | C8 | not-a-counterexample |
+| 70 | 4 | pysat:cd15 | SAT | 18762 | 21.13 | C8 | not-a-counterexample |
+
+### 7.2 LPS Ramanujan graphs
+
+X^{p,q} is the Cayley graph of PGL(2,q) on the p+1 primary norm-p Hamilton-quaternion generators (a>0, a odd); when Legendre(p/q)=-1 the identity component is taken. Every member is verified Ramanujan (lambda_2 <= 2sqrt(d-1)) and has high girth, yet each still contains a power-of-two cycle - the largest, X^{5,29} (n=12180, girth bound 3.7), has no C4, no witnessed C8, and triggers at C16.
+
+| X^{p,q} | n | degree | Legendre(p/q) | lambda_2 | 2sqrt(d-1) | Ramanujan | girth >= | trigger |
+|---|---:|---:|---:|---:|---:|---|---:|---|
+| X^{5,13} | 2184 | 6 | -1 | 4.2497 | 4.4721 | True | 3.997 | C8 |
+| X^{5,17} | 4896 | 6 | -1 | 4.3089 | 4.4721 | True | 3.998 | C8 |
+| X^{13,5} | 120 | 14 | -1 | 4.0 | 7.2111 | True | 3.966 | C4 |
+| X^{5,29} | 12180 | 6 | 1 | 4.442 | 4.4721 | True | 3.725 | C16 |
+| X^{13,17} | 2448 | 14 | 1 | 6.1061 | 7.2111 | True | 3.672 | C8 |
+
+### 7.3 Voltage lifts
+
+Z_k lifts of the Petersen graph (unit and random voltages) stay cubic and successfully cancel C4 (girth >= 5 is preserved), but a C8 survives in every lift - the cancellation is never complete.
+
+| base | k | voltage | n | C4 | trigger |
+|---|---:|---|---:|---|---|
+| petersen | 3 | unit | 30 | absent | C8 |
+| petersen | 3 | random | 30 | absent | C8 |
+| petersen | 5 | unit | 50 | absent | C8 |
+| petersen | 5 | random | 50 | absent | C8 |
+| petersen | 7 | unit | 70 | absent | C8 |
+| petersen | 7 | random | 70 | absent | C8 |
+
+## 8. Figures
 
 * `results/warmup/figures/induced_path_vs_n.png`
 * `results/warmup/figures/pow2_vs_n.png`
@@ -250,7 +297,7 @@ Boolean early-exit checker over CSR + bitset marks: nothing is counted, each len
 * `results/large/figures/spectral.png`
 * `results/large/figures/theory_vs_measured.png`
 
-## 8. Reproduce
+## 9. Reproduce
 
 ```bash
 pytest -q

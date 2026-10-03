@@ -1,0 +1,12 @@
+backend,clauses,lengths,message,n,seconds,status,trigger,verdict
+pysat:cd15,42,4,,5,0.0,UNSAT,,no-counterexample(proven)
+pysat:cd15,74,4,,6,0.0,UNSAT,,no-counterexample(proven)
+pysat:cd15,114,4,,7,0.0,UNSAT,,no-counterexample(proven)
+pysat:cd15,162,"4,8",,8,0.08,UNSAT,,no-counterexample(proven)
+pysat:cd15,218,"4,8",,9,1.98,UNSAT,,no-counterexample(proven)
+pysat:cd15,282,"4,8",,10,75.95,UNSAT,,no-counterexample(proven)
+pysat:cd15,3242,4,"mindeg=3 planar=False clawfree=False per={'4': 'absent-proof', '8': 'found'}",30,0.94,SAT,8,not-a-counterexample
+pysat:cd15,5922,4,"mindeg=3 planar=False clawfree=False per={'4': 'absent-proof', '8': 'found'}",40,2.8,SAT,8,not-a-counterexample
+pysat:cd15,9402,4,"mindeg=3 planar=False clawfree=False per={'4': 'absent-proof', '8': 'found'}",50,6.7,SAT,8,not-a-counterexample
+pysat:cd15,13682,4,"mindeg=3 planar=False clawfree=False per={'4': 'absent-proof', '8': 'found'}",60,11.48,SAT,8,not-a-counterexample
+pysat:cd15,18762,4,"mindeg=3 planar=False clawfree=False per={'4': 'absent-proof', '8': 'found'}",70,21.13,SAT,8,not-a-counterexample
