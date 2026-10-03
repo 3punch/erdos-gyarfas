@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# Numba / build artefacts
+*.nbi
+*.nbc
+
+# Large run outputs are curated rather than committed wholesale
+results/**/*.jsonl
+results/**/*_log.txt
+*.tmp
