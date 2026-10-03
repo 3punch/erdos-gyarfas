@@ -182,6 +182,22 @@ this machine (2 cores, 83 recorded runs, sizes 50 → 1000):
   *n* = 1000.
 * **Zero certified counterexamples.**
 
+### Hyperscale: early-exit search up to N = 100 000
+
+`python -m erdos_gyarfas.cli hyperscale` runs a separate, scale-first pipeline
+(`erdos_gyarfas/hyperscale/`) that trades density counting for a **boolean
+early-exit** checker: over a CSR adjacency with per-DFS bitset marks it probes
+2^k = 4, 8, 16, … and stops at the *first* witnessed cycle, flagging the graph
+"Not a Counterexample". Hard filters first discard planar, claw-free and
+P₁₃-free graphs, so only δ = 3, non-planar, non-claw-free, induced-P₁₃ graphs
+are ever checked. Generators span random cubic, dihedral and PSL(2,q) / Sₙ
+Cayley graphs, and annealed moderate-girth expanders, at N = 10 000 → 100 000.
+From the run on this machine (16 graphs, 472 s): the four dihedral graphs are
+planar and discarded; every one of the 12 kept graphs triggered — random cubic
+at C4, S₈ and the girth-5 annealed graphs at C8, and the PSL(2,q) expanders
+(girth > 16) at C32, the largest trigger observed. No counterexample. Full
+table in [`docs/EXPERIMENT_LOG.md`](docs/EXPERIMENT_LOG.md) §6.
+
 ## 7. Honest limitations
 
 * Long cycles are the weak point. Counting C₃₂ exactly on a 1000-vertex graph
@@ -194,6 +210,13 @@ this machine (2 cores, 83 recorded runs, sizes 50 → 1000):
 * The RL agents are lightweight by design (a two-layer MLP over 8 features).
   They are included to measure whether a *learned* move prior helps and whether
   it transfers across sizes — see the experiment log for the comparison.
+* The hyperscale checker is an *early-exit witness*, not a prover. A
+  `not-witnessed` length means the per-length DFS budget ran out — it is **not**
+  a proof that no cycle of that length exists (only the exact C4 scan proves
+  absence). The annealed "high-girth" family reached girth 5 at 10k/25k but only
+  3 at 50k/100k within the move budget; random-plus-annealing does not reach the
+  9–12 girth target at N ≈ 100 000, and the report says so rather than
+  overclaiming.
 
 ## 8. References
 

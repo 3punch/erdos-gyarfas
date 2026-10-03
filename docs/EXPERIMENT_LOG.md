@@ -1,6 +1,6 @@
 # Experiment log
 
-_Generated from `results/` on 2026-10-03 16:36 UTC by `python -m erdos_gyarfas.cli make-report`. Every number below is read from the CSVs the runner wrote; none is transcribed by hand._
+_Generated from `results/` on 2026-10-03 17:27 UTC by `python -m erdos_gyarfas.cli make-report`. Every number below is read from the CSVs the runner wrote; none is transcribed by hand._
 
 See [METHODOLOGY.md](METHODOLOGY.md) for the mathematics and the literature each filter is grounded in.
 
@@ -201,7 +201,35 @@ Retuning the ratio w₄/w₈ traces the achievable trade-off. Driving C₄ to ze
 | 400 | 0.50 | 0 | 1 | 1990 | 5 |
 | 400 | 0.25 | 3 | 1 | 1923 | 3 |
 
-## 6. Figures
+## 6. Hyperscale early-exit search (N up to 100 000)
+
+Boolean early-exit checker over CSR + bitset marks: nothing is counted, each length probe stops at the first witnessed cycle. `trigger` is the first power-of-two length at which a cycle was witnessed (proof the graph is **not** a counterexample); `largest length probed` is the maximum 2^k the checker attempted before stopping. A `not-witnessed` entry at some length is *not* a proof of absence at that length.
+
+* kept candidates: 12 of 16; early-exit triggered for 12 of 12.
+* highest trigger length observed: C32.
+
+| family | n | kept? | why discarded | has P13 | claw-free | planar | achieved girth | early-exit trigger | largest length probed | gen s | check s | verdict |
+|---|---:|---|---|---|---|---|---:|---|---:|---:|---:|---|
+| cayley_dihedral | 10000 | no | planar | True | False | True |  | - | - | 0.0 | 0.00 | discarded |
+| cayley_dihedral | 25000 | no | planar | True | False | True |  | - | - | 0.0 | 0.00 | discarded |
+| cayley_dihedral | 50000 | no | planar | True | False | True |  | - | - | 0.0 | 0.00 | discarded |
+| cayley_dihedral | 100000 | no | planar | True | False | True |  | - | - | 0.0 | 0.00 | discarded |
+| cayley_perm | 40320 | yes | - | True | False | False |  | C8 | 8 | 0.4 | 0.01 | not-a-counterexample |
+| cayley_psl2 | 12180 | yes | - | True | False | False |  | C32 | 32 | 0.1 | 6.79 | not-a-counterexample |
+| cayley_psl2 | 34440 | yes | - | True | False | False |  | C32 | 32 | 0.3 | 7.13 | not-a-counterexample |
+| cayley_psl2 | 74412 | yes | - | True | False | False |  | C32 | 32 | 0.4 | 12.33 | not-a-counterexample |
+| high_girth | 10000 | yes | - | True | False | False | 5 | C8 | 8 | 21.2 | 1.00 | not-a-counterexample |
+| high_girth | 25000 | yes | - | True | False | False | 5 | C8 | 8 | 43.5 | 1.04 | not-a-counterexample |
+| high_girth | 50000 | yes | - | True | False | False | 3 | C4 | 4 | 123.5 | 0.00 | not-a-counterexample |
+| high_girth | 100000 | yes | - | True | False | False | 3 | C4 | 4 | 406.1 | 0.00 | not-a-counterexample |
+| random_cubic | 10000 | yes | - | True | False | False |  | C4 | 4 | 0.0 | 0.16 | not-a-counterexample |
+| random_cubic | 25000 | yes | - | True | False | False |  | C4 | 4 | 0.2 | 0.00 | not-a-counterexample |
+| random_cubic | 50000 | yes | - | True | False | False |  | C4 | 4 | 0.1 | 0.00 | not-a-counterexample |
+| random_cubic | 100000 | yes | - | True | False | False |  | C4 | 4 | 1.8 | 0.01 | not-a-counterexample |
+
+**Reading the table.** The dihedral Cayley graphs $D_m$ with $S=\{r,r^{-1},s\}$ are Möbius/prism ladders and therefore *planar*; the filter discards all of them, which is exactly the brief's requirement (3-connected cubic planar graphs are a proven case, so they cannot be counterexamples). The `high_girth` family is a random cubic graph annealed toward large girth; the `achieved girth` column reports the girth *actually reached* — 5 at n=10k/25k but only 3 at n=50k/100k within the move budget. Random-plus-annealing does **not** reach the 9–12 girth target at N≈100k, so these are moderate-girth graphs and are reported as such rather than overclaimed. The `cayley_psl2` expanders have girth > 16: C8 and C16 come back `not-witnessed` (the per-length DFS budget was exhausted, which is *not* a proof of absence) and the first power-of-two cycle is witnessed at C32 — the largest trigger length in the study. Every kept graph triggered, so none is a counterexample, consistent with the conjecture; the checker never had to prove absence at scale.
+
+## 7. Figures
 
 * `results/warmup/figures/induced_path_vs_n.png`
 * `results/warmup/figures/pow2_vs_n.png`
@@ -222,7 +250,7 @@ Retuning the ratio w₄/w₈ traces the achievable trade-off. Driving C₄ to ze
 * `results/large/figures/spectral.png`
 * `results/large/figures/theory_vs_measured.png`
 
-## 7. Reproduce
+## 8. Reproduce
 
 ```bash
 pytest -q

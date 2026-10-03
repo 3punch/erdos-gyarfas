@@ -1,0 +1,17 @@
+family,n,claw_centers,claw_free,has_induced_p13,planar,planar_exact,discarded,discard_reason,gen_seconds,m,trigger_length,max_checked,check_seconds,verdict,total_seconds,n_sym,per_length,q,expected_order,achieved_girth,short_cycles_after
+cayley_dihedral,10000,10000,False,True,True,True,True,planar,0.005489502999807883,5000,,,0.0,discarded,0.7418859149993295,,,,,,
+cayley_dihedral,25000,25000,False,True,True,True,True,planar,0.010677252999812481,12500,,,0.0,discarded,1.9271876530001464,,,,,,
+cayley_dihedral,50000,50000,False,True,True,True,True,planar,0.02188093599943386,25000,,,0.0,discarded,4.873694181999781,,,,,,
+cayley_dihedral,100000,100000,False,True,True,True,True,planar,0.0457864520003568,50000,,,0.0,discarded,9.055139721999694,,,,,,
+cayley_perm,40320,40320,False,True,False,True,False,,0.3557513719997587,,8,8,0.009693201000118279,not-a-counterexample,3.0191306699998677,8,"{'4': 'absent-proof', '8': 'found'}",,,,
+cayley_psl2,12180,12180,False,True,False,True,False,,0.10043927900005656,,32,32,6.786276585999985,not-a-counterexample,7.7347950580006,,"{'4': 'absent-proof', '8': 'not-witnessed', '16': 'not-witnessed', '32': 'found'}",29,12180,,
+cayley_psl2,34440,34440,False,True,False,True,False,,0.29805269400003453,,32,32,7.1311082149995855,not-a-counterexample,9.087908493000214,,"{'4': 'absent-proof', '8': 'not-witnessed', '16': 'not-witnessed', '32': 'found'}",41,34440,,
+cayley_psl2,74412,74412,False,True,False,True,False,,0.42426718100068683,,32,32,12.32911005799997,not-a-counterexample,16.894294384000204,,"{'4': 'absent-proof', '8': 'not-witnessed', '16': 'not-witnessed', '32': 'found'}",53,74412,,
+high_girth,10000,10000,False,True,False,True,False,,21.236395300999902,,8,8,0.9986384930007262,not-a-counterexample,24.400368839999828,,"{'4': 'absent-proof', '8': 'found'}",,,5,"{3: 0, 4: 0, 5: 2, 6: 1, 7: 6, 8: 13}"
+high_girth,25000,25000,False,True,False,True,False,,43.4595424930003,,8,8,1.0438986939998358,not-a-counterexample,46.08709500799978,,"{'4': 'absent-proof', '8': 'found'}",,,5,"{3: 0, 4: 0, 5: 2, 6: 7, 7: 7, 8: 19}"
+high_girth,50000,49997,False,True,False,True,False,,123.45639906999986,,4,4,0.001224634999744012,not-a-counterexample,126.99437139099973,,{'4': 'found'},,,3,"{3: 1, 4: 1, 5: 3, 6: 2, 7: 5, 8: 13}"
+high_girth,100000,99997,False,True,False,True,False,,406.1105659600007,,4,4,0.001549024000269128,not-a-counterexample,411.0836569490002,,{'4': 'found'},,,3,"{3: 1, 4: 3, 5: 1, 6: 8, 7: 6, 8: 14}"
+random_cubic,10000,9997,False,True,False,True,False,,0.014493556000161334,,4,4,0.15627804599989759,not-a-counterexample,3.329931205000321,,{'4': 'found'},,,,
+random_cubic,25000,24991,False,True,False,True,False,,0.19659292500000447,,4,4,0.00030342399986693636,not-a-counterexample,1.6320437530002891,,{'4': 'found'},,,,
+random_cubic,50000,49997,False,True,False,True,False,,0.0796417459996519,,4,4,0.0008848700008456944,not-a-counterexample,3.878536430999702,,{'4': 'found'},,,,
+random_cubic,100000,99997,False,True,False,True,False,,1.7677854800003843,,4,4,0.009486250000009022,not-a-counterexample,9.505784896000478,,{'4': 'found'},,,,

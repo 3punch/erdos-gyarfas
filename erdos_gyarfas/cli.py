@@ -7,6 +7,7 @@ Examples
     python -m erdos_gyarfas.cli validate
     python -m erdos_gyarfas.cli benchmark --sizes 14 20 24
     python -m erdos_gyarfas.cli all
+    python -m erdos_gyarfas.cli hyperscale
     python -m erdos_gyarfas.cli make-report
 """
 
@@ -55,6 +56,14 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--sizes", type=int, nargs="*", default=[100, 200, 400])
     sp.add_argument("--moves", type=int, default=200_000)
 
+    sp = sub.add_parser("hyperscale",
+                        help="run the N=100k early-exit scaling pipeline")
+    sp.add_argument("--outdir", default="results/hyperscale")
+    sp.add_argument("--sizes", type=int, nargs="*",
+                    default=[10_000, 25_000, 50_000, 100_000])
+    sp.add_argument("--workers", type=int, default=0)
+    sp.add_argument("--max-length", type=int, default=2048)
+
     sp = sub.add_parser("report", help="summarise an existing results directory")
     sp.add_argument("--outdir", default="results")
 
@@ -88,6 +97,10 @@ def main(argv: list[str] | None = None) -> int:
     elif cmd == "report":
         from .experiments.report import summarize
         summarize(args.outdir)
+    elif cmd == "hyperscale":
+        from .hyperscale import run_hyperscale
+        run_hyperscale(args.outdir, sizes=args.sizes, workers=args.workers,
+                       max_length=args.max_length)
     elif cmd == "make-report":
         from .experiments.make_report import make_report
         path = make_report(args.outdir, args.out)
