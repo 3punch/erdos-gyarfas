@@ -1,0 +1,6 @@
+n,target,achieved,success,girth,planar,seconds,note
+14,cubic graph with C4 = C8 = 0,"{4: 0, 8: 7}",False,3,True,29.22109122799975,best of 4 restarts
+20,cubic graph with C4 = C8 = 0,"{4: 0, 8: 2, 16: 144}",False,3,False,25.720848076999573,best of 4 restarts
+24,cubic graph with C4 = C8 = 0,"{4: 0, 8: 0, 16: 228}",True,3,True,6.773438954000085,matches Markstrom's 24-vertex examples (only power-of-two cycles are 16-cycles)
+30,cubic graph with C4 = C8 = 0,"{4: 0, 8: 0, 16: 440}",True,3,False,7.589655523000147,best of 4 restarts
+40,cubic graph with C4 = C8 = 0,"{4: 0, 8: 0, 16: 681, 32: 55974}",True,3,False,15.37266839699987,best of 4 restarts
